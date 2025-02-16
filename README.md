@@ -2,7 +2,7 @@
 
 This source code allows you to make the ESP32 act as a Bluetooth Keyboard and control what it does.
 
-<blockquote class="twitter-tweet"><p lang="ja" dir="ltr">した <a href="https://t.co/2cPE8O7Y7g">pic.twitter.com/2cPE8O7Y7g</a></p>&mdash; maple (@maple0705) <a href="https://twitter.com/maple0705/status/1891083527359201389?ref_src=twsrc%5Etfw">February 16, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" data-lang="ja" data-dnt="true" data-theme="dark"><p lang="ja" dir="ltr">した <a href="https://t.co/2cPE8O7Y7g">pic.twitter.com/2cPE8O7Y7g</a></p>&mdash; maple (@maple0705) <a href="https://twitter.com/maple0705/status/1891083527359201389?ref_src=twsrc%5Etfw">2025年2月16日</a></blockquote>
 
 ## Original Repository:
 - [ESP32-BLE-Keyboard](https://github.com/T-vK/ESP32-BLE-Keyboard)
