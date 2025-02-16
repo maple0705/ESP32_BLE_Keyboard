@@ -11,7 +11,9 @@ This source code allows you to make the ESP32 act as a Bluetooth Keyboard and co
 
 ## Hardware
 - [かんたんUSBホスト](https://q61.org/blog/2021/06/09/easyusbhost/)  
-  'イベントモード' is only available in this code.
+  Only 'イベントモード' is  available in this code.
 - [M5StickC](https://docs.m5stack.com/en/core/m5stickc)  
   Pin '5V' and 'GND' are used to supply voltage to かんたんUSBホスト.  
   Pin 'G36'(TX) is connected to RX of かんたんUSBホスト.
+- [YMDK Air40](https://ymdkey.com/products/air40-rgb-hot-swap-cute-40-mechanical-keyboard-assembled-qmk-via-type-c-pcb-cnc-case-plate-kit)  
+  USB-Keyboard to be wireless via BLE
