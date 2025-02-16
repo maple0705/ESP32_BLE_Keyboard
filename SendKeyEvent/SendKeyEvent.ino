@@ -83,7 +83,7 @@ void sendKeyEvent(String Event) {
 
 void setup() {
 
-  Serial1.begin(9600, SERIAL_8N1, 36, 0);
+  Serial1.begin(115200, SERIAL_8N1, 36, 0);
   bleKeyboard.begin();
   M5.begin();
 
