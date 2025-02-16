@@ -14,7 +14,7 @@ Link to Movie:
 - add files BleKeyboard_Raw.h and BleKeyboard_Raw.cpp (files without '_Raw' are no longer used)
 - add functions pressRaw() and releaseRaw() to send UsageID of HID DIRECTLY (press() and release() are no longer used)
 
-## Hardware
+## Hardware Prerequisites
 - [かんたんUSBホスト](https://q61.org/blog/2021/06/09/easyusbhost/)  
   Only 'イベントモード' is  available in this code.
 - [M5StickC](https://docs.m5stack.com/en/core/m5stickc)  
@@ -22,3 +22,4 @@ Link to Movie:
   Pin 'G36'(TX) is connected to RX of かんたんUSBホスト.
 - [YMDK Air40](https://ymdkey.com/products/air40-rgb-hot-swap-cute-40-mechanical-keyboard-assembled-qmk-via-type-c-pcb-cnc-case-plate-kit)  
   USB-Keyboard to be wireless via BLE
+  (maybe any keyboards are OK)
