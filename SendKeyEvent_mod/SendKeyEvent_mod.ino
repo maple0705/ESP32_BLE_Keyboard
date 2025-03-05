@@ -1,5 +1,4 @@
 #include <M5StickC.h>
-//#include <BleKeyboard.h>
 #include <BleKeyboard_Raw.h>
 
 #define QUEUE_SIZE  10
@@ -82,9 +81,9 @@ void sendKeyEvent(String Event) {
 
   // debug: print key code and ascii code directly
   if( Event.length() >= 7 ) {
-    drawScreen(Event, String(keyCode), String(asciiCode));
+   drawScreen(Event, String(keyCode), String(asciiCode));
   } else {
-    drawScreen(Event, String(keyCode));
+   drawScreen(Event, String(keyCode));
   }
 }
 
@@ -158,10 +157,11 @@ void preventChattering() {
 }
 
 void setup() {
+
   Serial.begin(115200); // debug
   Serial1.begin(115200, SERIAL_8N1, 36, 0);
-  bleKeyboard.begin();
   M5.begin();
+  bleKeyboard.begin();
 
   drawScreen();
 }
@@ -187,6 +187,7 @@ void loop() {
         }
       }
 
+      // Events bofore preventing chattering
       Serial.println("Start1");
       for( int i = 0; i <= queueIdx; i++ ) {
         Serial.println(eventQueue[i] + " " + String(eventTimeDeltaQueue[i]) + "ms");
@@ -195,6 +196,7 @@ void loop() {
 
       preventChattering();
 
+      // Events after preventing chattering
       Serial.println("Start2");
       for( int i = 0; i <= queueIdx; i++ ) {
         Serial.println(eventQueue[i] + " " + String(eventTimeDeltaQueue[i]) + "ms");
@@ -206,6 +208,13 @@ void loop() {
         sendKeyEventQueue();
       }
     }
+  }
+
+  // reboot if BtnA is pressed
+  M5.update();
+  if( M5.BtnA.pressedFor(200) ) {
+    M5.Lcd.fillScreen(BLACK);
+    ESP.restart();
   }
 
 }

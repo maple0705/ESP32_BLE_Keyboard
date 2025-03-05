@@ -1,3 +1,5 @@
+#include "BleKeyboard_Raw.h"
+
 #if defined(USE_NIMBLE)
 #include <NimBLEDevice.h>
 #include <NimBLEServer.h>
@@ -14,7 +16,6 @@
 #include <driver/adc.h>
 #include "sdkconfig.h"
 
-#include "BleKeyboard_Raw.h"
 
 #if defined(CONFIG_ARDUHAL_ESP_LOG)
   #include "esp32-hal-log.h"
@@ -58,10 +59,10 @@ static const uint8_t _hidReportDescriptor[] = {
   REPORT_COUNT(1),    0x06,          //   REPORT_COUNT (6) ; 6 bytes (Keys)
   REPORT_SIZE(1),     0x08,          //   REPORT_SIZE(8)
   LOGICAL_MINIMUM(1), 0x00,          //   LOGICAL_MINIMUM(0)
-  LOGICAL_MAXIMUM(1), 0x65,          //   LOGICAL_MAXIMUM(0x65) ; 101 keys
+  LOGICAL_MAXIMUM(1), 0xDD,          //   LOGICAL_MAXIMUM(0x65→0xDD)
   USAGE_PAGE(1),      0x07,          //   USAGE_PAGE (Kbrd/Keypad)
   USAGE_MINIMUM(1),   0x00,          //   USAGE_MINIMUM (0)
-  USAGE_MAXIMUM(1),   0x65,          //   USAGE_MAXIMUM (0x65)
+  USAGE_MAXIMUM(1),   0xDD,          //   USAGE_MAXIMUM (0x65→0xDD)
   HIDINPUT(1),        0x00,          //   INPUT (Data,Array,Abs,No Wrap,Linear,Preferred State,No Null Position)
   END_COLLECTION(0),                 // END_COLLECTION
   // ------------------------------------------------- Media Keys
@@ -115,12 +116,20 @@ void BleKeyboard::begin(void)
 
   hid->manufacturer()->setValue(deviceManufacturer);
 
-  hid->pnp(0x02, 0xe502, 0xa111, 0x0210);
+  hid->pnp(0x02, vid, pid, version);
   hid->hidInfo(0x00, 0x01);
 
-  BLESecurity* pSecurity = new BLESecurity();
 
-  pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
+#if defined(USE_NIMBLE)
+
+  BLEDevice::setSecurityAuth(true, true, true);
+
+#else
+
+  BLESecurity* pSecurity = new BLESecurity();
+  pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_MITM_BOND);
+
+#endif // USE_NIMBLE
 
   hid->reportMap((uint8_t*)_hidReportDescriptor, sizeof(_hidReportDescriptor));
   hid->startServices();
@@ -163,6 +172,18 @@ void BleKeyboard::setName(std::string deviceName) {
  */
 void BleKeyboard::setDelay(uint32_t ms) {
   this->_delay_ms = ms;
+}
+
+void BleKeyboard::set_vendor_id(uint16_t vid) {
+	this->vid = vid;
+}
+
+void BleKeyboard::set_product_id(uint16_t pid) {
+	this->pid = pid;
+}
+
+void BleKeyboard::set_version(uint16_t version) {
+	this->version = version;
 }
 
 void BleKeyboard::sendReport(KeyReport* keys)
@@ -542,13 +563,31 @@ size_t BleKeyboard::releaseRaw(uint8_t k)
 
 void BleKeyboard::onConnect(BLEServer* pServer) {
   this->connected = true;
+
+#if !defined(USE_NIMBLE)
+
+  BLE2902* desc = (BLE2902*)this->inputKeyboard->getDescriptorByUUID(BLEUUID((uint16_t)0x2902));
+  desc->setNotifications(true);
+  desc = (BLE2902*)this->inputMediaKeys->getDescriptorByUUID(BLEUUID((uint16_t)0x2902));
+  desc->setNotifications(true);
+
+#endif // !USE_NIMBLE
+
 }
 
 void BleKeyboard::onDisconnect(BLEServer* pServer) {
   this->connected = false;
+
 #if !defined(USE_NIMBLE)
+
+  BLE2902* desc = (BLE2902*)this->inputKeyboard->getDescriptorByUUID(BLEUUID((uint16_t)0x2902));
+  desc->setNotifications(false);
+  desc = (BLE2902*)this->inputMediaKeys->getDescriptorByUUID(BLEUUID((uint16_t)0x2902));
+  desc->setNotifications(false);
+
   advertising->start();
-#endif  // !USE_NIMBLE
+
+#endif // !USE_NIMBLE
 }
 
 void BleKeyboard::onWrite(BLECharacteristic* me) {
